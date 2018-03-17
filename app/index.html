@@ -11,6 +11,19 @@
 
 
     </div>
+    <select class="key">
+      <option value="A">A</option>
+      <option value="B">B</option>
+      <option selected value="C">C</option>
+      <option value="D">D</option>
+      <option value="E">E</option>
+      <option value="F">F</option>
+      <option value="G">G</option>
+    </select>
+    <select class="modifier">
+      <option selected value="major">Major</option>
+      <option value="minor">Minor</option>
+    </select>
 
     <h1>E F F# G G# A A# B C C# D D# E</h1>
 
@@ -28,22 +41,85 @@
 
   var stringArray = [string1,string2,string3,string4,string5,string6];
 
-  var b_notes = ['B','C','C#','D','D#','E','F','F#','G','G#','A','A#'];
-  var g_notes = ['G','G#','A','A#','B','C','C#','D','D#','E','F','F#'];
-  var d_notes = ['D','D#','E','F','F#','G','G#','A','A#','B','C','C#'];
-  var a_notes = ['A','A#','B','C','C#','D','D#','E','F','F#','G','G#'];
-  var e_notes = ['E','F','F#','G','G#','A','A#','B','C','C#','D','D#'];
 
   var Notes = {
-    "B" : ['B','C','C#','D','D#','E','F','F#','G','G#','A','A#'],
-    "G" : ['G','G#','A','A#','B','C','C#','D','D#','E','F','F#'],
-    "D" : ['D','D#','E','F','F#','G','G#','A','A#','B','C','C#'],
     "A" : ['A','A#','B','C','C#','D','D#','E','F','F#','G','G#'],
+    "B" : ['B','C','C#','D','D#','E','F','F#','G','G#','A','A#'],
+    "C" : ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'],
+    "D" : ['D','D#','E','F','F#','G','G#','A','A#','B','C','C#'],
     "E" : ['E','F','F#','G','G#','A','A#','B','C','C#','D','D#'],
+    "F" : ['F','F#','G','G#','A','A#','B','C','C#','D','D#','E'],
+    "G" : ['G','G#','A','A#','B','C','C#','D','D#','E','F','F#'],
   }
-  console.log(Notes);
+
+  var NoteColours = {
+    "A" : '#f44336',
+    "A#" : '#ff5722',
+    "B" : '#ff9800',
+    "C" : '#ffeb3b',
+    "C#" : '#cddc39',
+    "D" : '#cddc39',
+    "D#" : '#4caf50',
+    "E" : '#00bcd4',
+    "F" : '#2196f3',
+    "F#" : '#3f51b5',
+    "G" : '#673ab7',
+    "G#" : '#9c27b0'
+  }
+
+  var keyInput = $('.key');
+  var modifierInput = $('.modifier');
 
   function renderNeck() {
+
+    var selectedNote = keyInput.val();
+    var selectedNoteModifier = modifierInput.val();
+    var selectedChordNotes = {
+
+    };
+
+    function createSelectedNotes(selectedNote, selectedNoteModifier) {
+
+      if (selectedNoteModifier == "major") {
+        var index = 0;
+        selectedChordNotes[1] = Notes[selectedNote][index];
+        index += 2;
+        selectedChordNotes[2] = Notes[selectedNote][index];
+        index += 2;
+        selectedChordNotes[3] = Notes[selectedNote][index];
+        index += 1;
+        selectedChordNotes[4] = Notes[selectedNote][index];
+        index += 2;
+        selectedChordNotes[5] = Notes[selectedNote][index];
+        index += 2;
+        selectedChordNotes[6] = Notes[selectedNote][index];
+        index += 2;
+        selectedChordNotes[7] = Notes[selectedNote][index];
+      }
+
+      if (selectedNoteModifier == "minor") {
+        var index = 0;
+        selectedChordNotes[1] = Notes[selectedNote][index];
+        index += 2;
+        selectedChordNotes[2] = Notes[selectedNote][index];
+        index += 1;
+        selectedChordNotes[3] = Notes[selectedNote][index];
+        index += 2;
+        selectedChordNotes[4] = Notes[selectedNote][index];
+        index += 2;
+        selectedChordNotes[5] = Notes[selectedNote][index];
+        index += 1;
+        selectedChordNotes[6] = Notes[selectedNote][index];
+        index += 2;
+        selectedChordNotes[7] = Notes[selectedNote][index];
+      }
+
+      console.log(selectedChordNotes);
+
+
+    }
+
+    createSelectedNotes(selectedNote, selectedNoteModifier);
 
     guitarNeck.css({
       "height" : window.innerWidth * 0.1 + 'px',
@@ -80,16 +156,40 @@
 
       fretHtml += "<div class='fret' fret-num='" + fretNumber + "'  style='width: "+fretLength+"px'>";
 
+      fretHtml += "<div class='fret__number-label'>"+fretNumber+"</div>"
 
       //string loop
       for (var string_i = 0; string_i < numberOfStrings; string_i++) {
         var stringHtml = "";
         var stringNumber = string_i + 1;
         var stringTune = stringArray[string_i];
-        var stringNoteIndex = (fretNumber % 12) - 1;
-        var stringNote = fretNumber % 12;
+        var stringNoteIndex = fretNumber % 12;
+        var stringNote = Notes[stringTune][stringNoteIndex];
+        var noteColour = NoteColours[stringNote];
+
+        var noteHighlighted = false;
+        for (var note in selectedChordNotes) {
+          if (selectedChordNotes.hasOwnProperty(note)) {
+              if (selectedChordNotes[note] == stringNote) {
+                noteHighlighted = true;
+              }
+          }
+        }
+
 
         stringHtml += "<div class='guitar-string' string-note='" + stringNote + "' string-tune='" + stringTune + "' string-num='" + stringNumber + "'>";
+
+        if (noteHighlighted == true) {
+          stringHtml += "<div class='guitar-string__background' style='background-color: "+noteColour+"'>";
+        }else{
+          stringHtml += "<div class='guitar-string__background'>";
+        }
+
+
+            stringHtml += stringNote;
+
+          stringHtml += "</div>";
+
 
         stringHtml += "</div>";
         fretHtml += stringHtml;
@@ -124,7 +224,9 @@
 
   renderNeck();
 
-  $(window).on('resize', renderNeck)
+  $(window).on('resize', renderNeck);
+
+  $('.key, .modifier').on('change', renderNeck);
 
 
 

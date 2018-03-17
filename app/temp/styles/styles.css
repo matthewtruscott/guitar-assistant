@@ -406,7 +406,23 @@ img{
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
   border-bottom: rgba(0,0,0,0.1) 1px solid;
+  position: relative;
 }
+
+.guitar-string__background{
+    position: absolute;
+    width: 1.5vw;
+    height: 1.5vw;
+    border-radius: 50%;
+    -webkit-transform: translate(-50%,-50%);
+            transform: translate(-50%,-50%);
+    top: 50%;
+    left: 50%;
+    text-align: center;
+    color: white;
+    line-height: 1.5vw;
+    z-index: 1;
+  }
 
 .fret{
   height: 100%;
@@ -415,7 +431,15 @@ img{
           box-sizing: border-box;
   border-left: black 3px solid;
   position: relative;
+
 }
+
+.fret__number-label{
+    position: absolute;
+    top: -1.5rem;
+    left: 50%;
+    margin-left: -0.5rem;
+  }
 
 .fret:last-of-type{
   border-right: black 3px solid;
