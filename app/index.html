@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <link rel="stylesheet" href="temp/styles/styles.css">
+  </head>
+  <body>
+    <div class="guitar-neck">
+
+
+
+    </div>
+
+    <h1>E F F# G G# A A# B C C# D D# E</h1>
+
+  <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+  <script type="text/javascript">
+
+  var guitarNeck = $('.guitar-neck');
+
+  var string1 = 'E';
+  var string2 = 'B';
+  var string3 = 'G';
+  var string4 = 'D';
+  var string5 = 'A';
+  var string6 = 'E';
+
+  var stringArray = [string1,string2,string3,string4,string5,string6];
+
+  var b_notes = ['B','C','C#','D','D#','E','F','F#','G','G#','A','A#'];
+  var g_notes = ['G','G#','A','A#','B','C','C#','D','D#','E','F','F#'];
+  var d_notes = ['D','D#','E','F','F#','G','G#','A','A#','B','C','C#'];
+  var a_notes = ['A','A#','B','C','C#','D','D#','E','F','F#','G','G#'];
+  var e_notes = ['E','F','F#','G','G#','A','A#','B','C','C#','D','D#'];
+
+  var Notes = {
+    "B" : ['B','C','C#','D','D#','E','F','F#','G','G#','A','A#'],
+    "G" : ['G','G#','A','A#','B','C','C#','D','D#','E','F','F#'],
+    "D" : ['D','D#','E','F','F#','G','G#','A','A#','B','C','C#'],
+    "A" : ['A','A#','B','C','C#','D','D#','E','F','F#','G','G#'],
+    "E" : ['E','F','F#','G','G#','A','A#','B','C','C#','D','D#'],
+  }
+  console.log(Notes);
+
+  function renderNeck() {
+
+    guitarNeck.css({
+      "height" : window.innerWidth * 0.1 + 'px',
+      "width" : window.innerWidth * 0.8 + 'px',
+      "margin" : window.innerWidth * 0.1 + 'px',
+      "background-color" : "#FFE082"
+    });
+
+
+    var numberOfFrets = 22,
+    numberOfStrings = 6,
+    neckWidth = window.innerWidth * 0.8,
+    avgFretLength = neckWidth / numberOfFrets;
+
+    var maxFretWidth = 1,
+    minFretWidth = 0.25;
+
+    var differenceBetweenFretMinMax = maxFretWidth - minFretWidth,
+    maxFretWidthPx = avgFretLength / (1 - differenceBetweenFretMinMax/2);
+
+    function outputFretLength(fret) {
+    fret = numberOfFrets - fret;
+    return  (minFretWidth + differenceBetweenFretMinMax / numberOfFrets * fret);
+
+    }
+
+    var guitarNeckHtml = "";
+
+    //fret loop
+    for (var fret_i = 0; fret_i < numberOfFrets; fret_i++) {
+      var fretHtml = "";
+      var fretNumber = fret_i + 1;
+      var fretLength = maxFretWidthPx * outputFretLength(fretNumber);
+
+      fretHtml += "<div class='fret' fret-num='" + fretNumber + "'  style='width: "+fretLength+"px'>";
+
+
+      //string loop
+      for (var string_i = 0; string_i < numberOfStrings; string_i++) {
+        var stringHtml = "";
+        var stringNumber = string_i + 1;
+        var stringTune = stringArray[string_i];
+        var stringNoteIndex = (fretNumber % 12) - 1;
+        var stringNote = fretNumber % 12;
+
+        stringHtml += "<div class='guitar-string' string-note='" + stringNote + "' string-tune='" + stringTune + "' string-num='" + stringNumber + "'>";
+
+        stringHtml += "</div>";
+        fretHtml += stringHtml;
+
+      }
+
+      fretHtml += "</div>";
+      guitarNeckHtml += fretHtml;
+    }
+
+    guitarNeck.html(guitarNeckHtml);
+
+    $('.fret[fret-num="3"]').addClass('single-dot');
+
+    $('.fret[fret-num="5"]').addClass('single-dot');
+
+    $('.fret[fret-num="7"]').addClass('single-dot');
+
+    $('.fret[fret-num="9"]').addClass('single-dot');
+
+    $('.fret[fret-num="12"]').addClass('double-dot');
+
+    $('.fret[fret-num="15"]').addClass('single-dot');
+
+    $('.fret[fret-num="17"]').addClass('single-dot');
+
+    $('.fret[fret-num="19"]').addClass('single-dot');
+
+    $('.fret[fret-num="21"]').addClass('single-dot');
+
+  }
+
+  renderNeck();
+
+  $(window).on('resize', renderNeck)
+
+
+
+
+  </script>
+  </body>
+</html>
