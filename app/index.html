@@ -11,24 +11,33 @@
 
 
     </div>
-    <select class="key">
-      <option value="A">A</option>
-      <option value="B">B</option>
-      <option selected value="C">C</option>
-      <option value="D">D</option>
-      <option value="E">E</option>
-      <option value="F">F</option>
-      <option value="G">G</option>
-    </select>
-    <select class="modifier">
-      <option selected value="major">Major</option>
-      <option value="minor">Minor</option>
-    </select>
+    <div class="dashboard">
 
-    <h1>E F F# G G# A A# B C C# D D# E</h1>
+      <select class="key">
+        <option value="A">A</option>
+        <option value="B">B</option>
+        <option selected value="C">C</option>
+        <option value="D">D</option>
+        <option value="E">E</option>
+        <option value="F">F</option>
+        <option value="G">G</option>
+      </select>
+      <select class="modifier">
+        <option selected value="major">Major</option>
+        <option value="minor">Minor</option>
+      </select>
+
+      <h1 class="selected-chord-intervals"></h3>
+
+    </div>
 
   <script src="../node_modules/jquery/dist/jquery.min.js"></script>
   <script type="text/javascript">
+  var keyInput = $('.key');
+  var modifierInput = $('.modifier');
+
+  var selectedNote = keyInput.val();
+  var selectedNoteModifier = modifierInput.val();
 
   var guitarNeck = $('.guitar-neck');
 
@@ -41,7 +50,6 @@
 
   var stringArray = [string1,string2,string3,string4,string5,string6];
 
-
   var Notes = {
     "A" : ['A','A#','B','C','C#','D','D#','E','F','F#','G','G#'],
     "B" : ['B','C','C#','D','D#','E','F','F#','G','G#','A','A#'],
@@ -52,13 +60,17 @@
     "G" : ['G','G#','A','A#','B','C','C#','D','D#','E','F','F#'],
   }
 
+  var chromaticNotes = ['A','A#','B','C','C#','D','D#','E','F','F#','G','G#'];
+
+
+
   var NoteColours = {
     "A" : '#f44336',
     "A#" : '#ff5722',
     "B" : '#ff9800',
     "C" : '#ffeb3b',
     "C#" : '#cddc39',
-    "D" : '#cddc39',
+    "D" : '#8bc34a',
     "D#" : '#4caf50',
     "E" : '#00bcd4',
     "F" : '#2196f3',
@@ -67,51 +79,58 @@
     "G#" : '#9c27b0'
   }
 
-  var keyInput = $('.key');
-  var modifierInput = $('.modifier');
+
 
   function renderNeck() {
 
     var selectedNote = keyInput.val();
     var selectedNoteModifier = modifierInput.val();
-    var selectedChordNotes = {
+    var selectedChordNotes = {};
 
-    };
+    // creates the array of current notes
+    var indexOfNote = chromaticNotes.indexOf(selectedNote);
+    var selectedNoteArray = [];
+    for (var i = indexOfNote; i < chromaticNotes.length; i++) {
+      selectedNoteArray.push(chromaticNotes[i]);
+    }
+    for (var i = 0; i < indexOfNote; i++) {
+      selectedNoteArray.push(chromaticNotes[i]);
+    }
 
     function createSelectedNotes(selectedNote, selectedNoteModifier) {
 
       if (selectedNoteModifier == "major") {
         var index = 0;
-        selectedChordNotes[1] = Notes[selectedNote][index];
+        selectedChordNotes[1] = selectedNoteArray[index];
         index += 2;
-        selectedChordNotes[2] = Notes[selectedNote][index];
+        selectedChordNotes[2] = selectedNoteArray[index];
         index += 2;
-        selectedChordNotes[3] = Notes[selectedNote][index];
+        selectedChordNotes[3] = selectedNoteArray[index];
         index += 1;
-        selectedChordNotes[4] = Notes[selectedNote][index];
+        selectedChordNotes[4] = selectedNoteArray[index];
         index += 2;
-        selectedChordNotes[5] = Notes[selectedNote][index];
+        selectedChordNotes[5] = selectedNoteArray[index];
         index += 2;
-        selectedChordNotes[6] = Notes[selectedNote][index];
+        selectedChordNotes[6] = selectedNoteArray[index];
         index += 2;
-        selectedChordNotes[7] = Notes[selectedNote][index];
+        selectedChordNotes[7] = selectedNoteArray[index];
       }
 
       if (selectedNoteModifier == "minor") {
         var index = 0;
-        selectedChordNotes[1] = Notes[selectedNote][index];
+        selectedChordNotes[1] = selectedNoteArray[index];
         index += 2;
-        selectedChordNotes[2] = Notes[selectedNote][index];
+        selectedChordNotes[2] = selectedNoteArray[index];
         index += 1;
-        selectedChordNotes[3] = Notes[selectedNote][index];
+        selectedChordNotes[3] = selectedNoteArray[index];
         index += 2;
-        selectedChordNotes[4] = Notes[selectedNote][index];
+        selectedChordNotes[4] = selectedNoteArray[index];
         index += 2;
-        selectedChordNotes[5] = Notes[selectedNote][index];
+        selectedChordNotes[5] = selectedNoteArray[index];
         index += 1;
-        selectedChordNotes[6] = Notes[selectedNote][index];
+        selectedChordNotes[6] = selectedNoteArray[index];
         index += 2;
-        selectedChordNotes[7] = Notes[selectedNote][index];
+        selectedChordNotes[7] = selectedNoteArray[index];
       }
 
       console.log(selectedChordNotes);
@@ -120,6 +139,44 @@
     }
 
     createSelectedNotes(selectedNote, selectedNoteModifier);
+
+    function createSelectedChordNotes() {
+
+      var selectedChordNotesHtml = "";
+
+      for (note in selectedChordNotes) {
+        var colourOfNote = NoteColours[selectedChordNotes[note]];
+
+        selectedChordNotesHtml += "<span class='selected-chord-intervals__interval-"+note+"' style='border: 2px solid "+colourOfNote+"'>" + selectedChordNotes[note] + "</span>" + " ";
+      }
+
+      selectedChordNotesHtml += "<span class='selected-chord-intervals__interval-8' style='border: 2px solid "+NoteColours[selectedChordNotes[1]]+"'>" + selectedChordNotes[1] + "</span>" + " ";
+
+
+      // selectedChordNotesHtml += "<span class='selected-chord-intervals__interval-1'>" + selectedChordNotes[1] + "</span>" + " ";
+      //
+      // selectedChordNotesHtml += "<span>" + selectedChordNotes[2] + "</span>" + " ";
+      //
+      // selectedChordNotesHtml += "<span class='selected-chord-intervals__interval-3'>" + selectedChordNotes[3] + "</span>" + " ";
+      //
+      // selectedChordNotesHtml += "<span>" + selectedChordNotes[4] + "</span>" + " ";
+      //
+      // selectedChordNotesHtml += "<span class='selected-chord-intervals__interval-5'>" + selectedChordNotes[5] + "</span>" + " ";
+      //
+      // selectedChordNotesHtml += "<span>" + selectedChordNotes[6] + "</span>" + " ";
+      //
+      // selectedChordNotesHtml += "<span class='selected-chord-intervals__interval-7'>" + selectedChordNotes[7] + "</span>" + " ";
+
+
+
+
+      $('.selected-chord-intervals').html(selectedChordNotesHtml);
+
+    }
+
+    createSelectedChordNotes();
+
+
 
     guitarNeck.css({
       "height" : window.innerWidth * 0.1 + 'px',
@@ -176,11 +233,24 @@
           }
         }
 
+        var noteIsRoot = false;
+        if (stringNote == selectedNote) {
+          noteIsRoot = true;
+        }
+
 
         stringHtml += "<div class='guitar-string' string-note='" + stringNote + "' string-tune='" + stringTune + "' string-num='" + stringNumber + "'>";
 
         if (noteHighlighted == true) {
-          stringHtml += "<div class='guitar-string__background' style='background-color: "+noteColour+"'>";
+
+          if (noteIsRoot == true) {
+            stringHtml += "<div class='guitar-string__background' style='border: 4px solid white; background-color: "+noteColour+";'>";
+          }else{
+            stringHtml += "<div class='guitar-string__background' style='background-color: "+noteColour+"; box-shadow: 0px 0px 15px -2px rgba(0,0,0,0.2)'>";
+          }
+
+
+
         }else{
           stringHtml += "<div class='guitar-string__background'>";
         }

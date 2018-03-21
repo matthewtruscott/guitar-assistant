@@ -1,0 +1,56 @@
+.dashboard{
+  margin-left: 10vw;
+
+}
+
+.selected-chord-intervals{
+
+  margin-top: 2em;
+
+  span{
+    display: inline-block;
+    margin: 0 0.4em;
+    position: relative;
+    padding: 0 0.5em;
+    box-sizing: border-box;
+  }
+  span::after{
+    display: block;
+    position: absolute;
+    color: black;
+    font-size: 0.6em;
+    top: -1.8em;
+    left:50%;
+    font-weight: 300;
+    transform: translateX(-50%);
+  }
+
+  &__interval-1{
+    //color: #ff5722;
+  }
+  &__interval-1::after{
+    content: "root";
+
+  }
+
+  &__interval-3{
+    //color: #ff9800;
+  }
+  &__interval-3::after{
+    content: "3rd";
+  }
+
+    &__interval-5{
+    //color: #ff5722;
+  }
+  &__interval-5::after{
+    content: "5th";
+  }
+
+  &__interval-7{
+
+  }
+  &__interval-7::after{
+    content: "7th";
+  }
+}

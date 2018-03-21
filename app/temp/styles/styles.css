@@ -489,3 +489,67 @@ img{
   background-color:rgba(0,0,0,0.4);
   border-radius: 50%;
 }
+
+.dashboard{
+  margin-left: 10vw;
+
+}
+
+.selected-chord-intervals{
+
+  margin-top: 2em;
+}
+
+.selected-chord-intervals span{
+    display: inline-block;
+    margin: 0 0.4em;
+    position: relative;
+    padding: 0 0.5em;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+  }
+
+.selected-chord-intervals span::after{
+    display: block;
+    position: absolute;
+    color: black;
+    font-size: 0.6em;
+    top: -1.8em;
+    left:50%;
+    font-weight: 300;
+    -webkit-transform: translateX(-50%);
+            transform: translateX(-50%);
+  }
+
+.selected-chord-intervals__interval-1{
+    //color: #ff5722;
+  }
+
+.selected-chord-intervals__interval-1::after{
+    content: "root";
+
+  }
+
+.selected-chord-intervals__interval-3{
+    //color: #ff9800;
+  }
+
+.selected-chord-intervals__interval-3::after{
+    content: "3rd";
+  }
+
+.selected-chord-intervals__interval-5{
+    //color: #ff5722;
+  }
+
+.selected-chord-intervals__interval-5::after{
+    content: "5th";
+  }
+
+.selected-chord-intervals__interval-7{
+
+  }
+
+.selected-chord-intervals__interval-7::after{
+    content: "7th";
+  }
