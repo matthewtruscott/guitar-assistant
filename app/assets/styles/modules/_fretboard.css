@@ -21,6 +21,24 @@
     color: white;
     line-height: 1.5vw;
     z-index: 1;
+    font-size: 0.9vw;
+    opacity: 0.5;
+
+    &--root-note{
+      border: 0.15vw solid black;
+      color: black;
+      font-weight: bold;
+      opacity: 1;
+
+    }
+    &--3rd-note{
+      border: 0.15vw solid black;
+      opacity: 1;
+    }
+    &--5th-note{
+      border: 0.15vw solid black;
+      opacity: 1;
+    }
   }
 }
 
@@ -28,7 +46,7 @@
   height: 100%;
   float: left;
   box-sizing: border-box;
-  border-left: black 3px solid;
+  border-left: rgba(121, 85, 72, 0.35) 3px solid;
   position: relative;
 
   &__number-label{
@@ -41,7 +59,7 @@
 }
 
 .fret:last-of-type{
-  border-right: black 3px solid;
+  border-right: rgba(121, 85, 72, 0.35) 3px solid;
   box-sizing:content-box;
 
 }

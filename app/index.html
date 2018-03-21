@@ -15,12 +15,17 @@
 
       <select class="key">
         <option value="A">A</option>
+        <option value="A#">A#</option>
         <option value="B">B</option>
         <option selected value="C">C</option>
+        <option value="C#">C#</option>
         <option value="D">D</option>
+        <option value="D#">D#</option>
         <option value="E">E</option>
         <option value="F">F</option>
+        <option value="F#">F#</option>
         <option value="G">G</option>
+        <option value="G#">G#</option>
       </select>
       <select class="modifier">
         <option selected value="major">Major</option>
@@ -36,8 +41,27 @@
   var keyInput = $('.key');
   var modifierInput = $('.modifier');
 
+
+  var numberOfFrets = 22,
+  numberOfStrings = 6,
+  neckWidth = window.innerWidth * 0.9,
+  avgFretLength = neckWidth / numberOfFrets;
+
+  var maxFretWidth = 1,
+  minFretWidth = 0.25;
+
+  var differenceBetweenFretMinMax = maxFretWidth - minFretWidth,
+  maxFretWidthPx = avgFretLength / (1 - differenceBetweenFretMinMax/2);
+
+  function outputFretLength(fret) {
+    fret = numberOfFrets - fret;
+    return  (minFretWidth + differenceBetweenFretMinMax / numberOfFrets * fret);
+  }
+
   var selectedNote = keyInput.val();
   var selectedNoteModifier = modifierInput.val();
+
+  window.curSetKey = {};
 
   var guitarNeck = $('.guitar-neck');
 
@@ -50,18 +74,31 @@
 
   var stringArray = [string1,string2,string3,string4,string5,string6];
 
-  var Notes = {
-    "A" : ['A','A#','B','C','C#','D','D#','E','F','F#','G','G#'],
-    "B" : ['B','C','C#','D','D#','E','F','F#','G','G#','A','A#'],
-    "C" : ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'],
-    "D" : ['D','D#','E','F','F#','G','G#','A','A#','B','C','C#'],
-    "E" : ['E','F','F#','G','G#','A','A#','B','C','C#','D','D#'],
-    "F" : ['F','F#','G','G#','A','A#','B','C','C#','D','D#','E'],
-    "G" : ['G','G#','A','A#','B','C','C#','D','D#','E','F','F#'],
-  }
+  var selectedNote,selectedNoteModifier;
+  var selectedChordNotes;
+  var currentlySelected;
 
   var chromaticNotes = ['A','A#','B','C','C#','D','D#','E','F','F#','G','G#'];
 
+  var Notes = {};
+
+
+  for (var i = 0; i < chromaticNotes.length; i++) {
+    var indexOfNote = chromaticNotes.indexOf(chromaticNotes[i]);
+    var curNoteArray = [];
+    //
+    for (var ii = indexOfNote; ii < chromaticNotes.length; ii++) {
+      curNoteArray.push(chromaticNotes[ii]);
+    }
+
+    for (var ii = 0; ii < indexOfNote; ii++) {
+      curNoteArray.push(chromaticNotes[ii]);
+    }
+
+    Notes[chromaticNotes[i]] = curNoteArray;
+  }
+
+  console.log(Notes);
 
 
   var NoteColours = {
@@ -79,13 +116,150 @@
     "G#" : '#9c27b0'
   }
 
-
-
   function renderNeck() {
 
-    var selectedNote = keyInput.val();
-    var selectedNoteModifier = modifierInput.val();
-    var selectedChordNotes = {};
+    guitarNeck.css({
+      "height" : window.innerWidth * 0.1125 + 'px',
+      "width" : window.innerWidth * 0.9 + 'px',
+      "margin" : window.innerWidth * 0.05 + 'px',
+      "background-color" : "#FFE082"
+    });
+
+
+    var guitarNeckHtml = "";
+
+    //fret loop
+    for (var fret_i = 0; fret_i < numberOfFrets; fret_i++) {
+      var fretHtml = "";
+      var fretNumber = fret_i + 1;
+      var fretLength = maxFretWidthPx * outputFretLength(fretNumber);
+
+      fretHtml += "<div class='fret' fret-num='" + fretNumber + "'  style='width: "+fretLength+"px'>";
+
+      fretHtml += "<div class='fret__number-label'>"+fretNumber+"</div>"
+
+      //string loop
+      for (var string_i = 0; string_i < numberOfStrings; string_i++) {
+        var stringHtml = "";
+        var stringNumber = string_i + 1;
+        var stringTune = stringArray[string_i];
+        var stringNoteIndex = fretNumber % 12;
+        var stringNote = Notes[stringTune][stringNoteIndex];
+        var noteColour = NoteColours[stringNote];
+
+        var noteHighlighted = false;
+        for (var note in window.curSetKey) {
+          if (window.curSetKey.hasOwnProperty(note)) {
+              if (window.curSetKey[note] == stringNote) {
+                noteHighlighted = true;
+              }
+          }
+        }
+
+        var noteIsRoot = false;
+        if (stringNote == selectedNote) {
+          noteIsRoot = true;
+        }
+
+        var noteIs3rd = false;
+        if (stringNote == selectedChordNotes[3]) {
+          noteIs3rd = true;
+        }
+
+        var noteIs5th = false;
+        if (stringNote == selectedChordNotes[5]) {
+          noteIs5th = true;
+        }
+
+        stringHtml += "<div class='guitar-string' string-note='" + stringNote + "' string-tune='" + stringTune + "' string-num='" + stringNumber + "'>";
+
+        if (noteHighlighted == true) {
+
+          if (noteIsRoot == true) {
+            stringHtml += "<div class='guitar-string__background guitar-string__background--root-note' style=' background-color: "+noteColour+";'>";
+          }else if (noteIs3rd == true) {
+            stringHtml += "<div class='guitar-string__background guitar-string__background--3rd-note' style=' background-color: "+noteColour+";'>";
+          }else if (noteIs5th == true) {
+            stringHtml += "<div class='guitar-string__background guitar-string__background--5th-note' style=' background-color: "+noteColour+";'>";
+          }
+          else{
+            stringHtml += "<div class='guitar-string__background' style='background-color: "+noteColour+"; box-shadow: 0px 0px 8px -2px rgba(0,0,0,0.4)'>";
+          }
+
+        }else{
+          stringHtml += "<div class='guitar-string__background'>";
+        }
+
+
+          stringHtml += stringNote;
+
+          stringHtml += "</div>";
+
+
+        stringHtml += "</div>";
+        fretHtml += stringHtml;
+
+      }
+
+      fretHtml += "</div>";
+      guitarNeckHtml += fretHtml;
+    }
+
+    guitarNeck.html(guitarNeckHtml);
+
+    $('.fret[fret-num="3"]').addClass('single-dot');
+
+    $('.fret[fret-num="5"]').addClass('single-dot');
+
+    $('.fret[fret-num="7"]').addClass('single-dot');
+
+    $('.fret[fret-num="9"]').addClass('single-dot');
+
+    $('.fret[fret-num="12"]').addClass('double-dot');
+
+    $('.fret[fret-num="15"]').addClass('single-dot');
+
+    $('.fret[fret-num="17"]').addClass('single-dot');
+
+    $('.fret[fret-num="19"]').addClass('single-dot');
+
+    $('.fret[fret-num="21"]').addClass('single-dot');
+
+  }
+  manageOptions();
+  renderNeck();
+
+  $(window).on('resize', resizeHandler);
+
+  $('.key, .modifier').on('change', onChangeHandler);
+
+  function resizeHandler(){
+    manageOptions();
+    renderNeck();
+  }
+
+  function onChangeHandler(){
+    manageOptions();
+    renderNeck();
+  }
+
+  function changeFretBoard(note2,modifier2){
+    fretboardChangeOptions(note2,modifier2);
+    renderNeck();
+  }
+
+
+
+  function fretboardChangeOptions(note2,modifier2){
+
+    neckWidth = window.innerWidth * 0.9;
+    avgFretLength = neckWidth / numberOfFrets;
+
+    differenceBetweenFretMinMax = maxFretWidth - minFretWidth;
+    maxFretWidthPx = avgFretLength / (1 - differenceBetweenFretMinMax/2);
+
+    selectedNote = note2;
+    selectedNoteModifier = modifier2;
 
     // creates the array of current notes
     var indexOfNote = chromaticNotes.indexOf(selectedNote);
@@ -140,166 +314,199 @@
 
     createSelectedNotes(selectedNote, selectedNoteModifier);
 
+
+  }
+
+  function manageOptions(){
+
+    console.log('manageOptions getting called');
+
+    neckWidth = window.innerWidth * 0.9;
+    avgFretLength = neckWidth / numberOfFrets;
+
+    differenceBetweenFretMinMax = maxFretWidth - minFretWidth;
+    maxFretWidthPx = avgFretLength / (1 - differenceBetweenFretMinMax/2);
+
+    selectedNote = keyInput.val();
+    selectedNoteModifier = modifierInput.val();
+    //window.curSetKey = selectedNote;
+    selectedChordNotes = {};
+
+    // creates the array of current notes
+    var indexOfNote = chromaticNotes.indexOf(selectedNote);
+    var selectedNoteArray = [];
+    for (var i = indexOfNote; i < chromaticNotes.length; i++) {
+      selectedNoteArray.push(chromaticNotes[i]);
+    }
+    for (var i = 0; i < indexOfNote; i++) {
+      selectedNoteArray.push(chromaticNotes[i]);
+    }
+
+    function createSelectedNotes(selectedNote, selectedNoteModifier) {
+
+      if (selectedNoteModifier == "major") {
+        var index = 0;
+        selectedChordNotes[1] = selectedNoteArray[index];
+        index += 2;
+        selectedChordNotes[2] = selectedNoteArray[index];
+        index += 2;
+        selectedChordNotes[3] = selectedNoteArray[index];
+        index += 1;
+        selectedChordNotes[4] = selectedNoteArray[index];
+        index += 2;
+        selectedChordNotes[5] = selectedNoteArray[index];
+        index += 2;
+        selectedChordNotes[6] = selectedNoteArray[index];
+        index += 2;
+        selectedChordNotes[7] = selectedNoteArray[index];
+      }
+
+      if (selectedNoteModifier == "minor") {
+        var index = 0;
+        selectedChordNotes[1] = selectedNoteArray[index];
+        index += 2;
+        selectedChordNotes[2] = selectedNoteArray[index];
+        index += 1;
+        selectedChordNotes[3] = selectedNoteArray[index];
+        index += 2;
+        selectedChordNotes[4] = selectedNoteArray[index];
+        index += 2;
+        selectedChordNotes[5] = selectedNoteArray[index];
+        index += 1;
+        selectedChordNotes[6] = selectedNoteArray[index];
+        index += 2;
+        selectedChordNotes[7] = selectedNoteArray[index];
+      }
+
+      console.log(selectedChordNotes);
+
+    }
+
+    createSelectedNotes(selectedNote, selectedNoteModifier);
+
+    function createSelectedKey(selectedNote, selectedNoteModifier) {
+
+      if (selectedNoteModifier == "major") {
+        var index = 0;
+        window.curSetKey[1] = selectedNoteArray[index];
+        index += 2;
+        window.curSetKey[2] = selectedNoteArray[index];
+        index += 2;
+        window.curSetKey[3] = selectedNoteArray[index];
+        index += 1;
+        window.curSetKey[4] = selectedNoteArray[index];
+        index += 2;
+        window.curSetKey[5] = selectedNoteArray[index];
+        index += 2;
+        window.curSetKey[6] = selectedNoteArray[index];
+        index += 2;
+        window.curSetKey[7] = selectedNoteArray[index];
+      }
+
+      if (selectedNoteModifier == "minor") {
+        var index = 0;
+        window.curSetKey[1] = selectedNoteArray[index];
+        index += 2;
+        window.curSetKey[2] = selectedNoteArray[index];
+        index += 1;
+        window.curSetKey[3] = selectedNoteArray[index];
+        index += 2;
+        window.curSetKey[4] = selectedNoteArray[index];
+        index += 2;
+        window.curSetKey[5] = selectedNoteArray[index];
+        index += 1;
+        window.curSetKey[6] = selectedNoteArray[index];
+        index += 2;
+        window.curSetKey[7] = selectedNoteArray[index];
+      }
+
+      console.log(window.curSetKey);
+
+    }
+
+    createSelectedKey(selectedNote, selectedNoteModifier);
+
+
     function createSelectedChordNotes() {
 
       var selectedChordNotesHtml = "";
 
       for (note in selectedChordNotes) {
-        var colourOfNote = NoteColours[selectedChordNotes[note]];
+        var curNote = selectedChordNotes[note];
+        var colourOfNote = NoteColours[curNote];
+        var modifier = '';
+        console.log(selectedNoteModifier);
+        if (selectedNoteModifier == 'major'){
+          if (note == 1) {
+            modifier = 'major';
+          }
+          if (note == 2) {
+            modifier = 'minor';
+          }
+          if (note == 3) {
+            modifier = 'minor';
+          }
+          if (note == 4) {
+            modifier = 'major';
+          }
+          if (note == 5) {
+            modifier = 'major';
+          }
+          if (note == 6) {
+            modifier = 'minor';
+          }
+          if (note == 7) {
+            modifier = 'Diminished';
+          }
+        }
+        if (selectedNoteModifier == 'minor'){
+          if (note == 1) {
+            modifier = 'minor';
+          }
+          if (note == 2) {
+            modifier = 'Diminished';
+          }
+          if (note == 3) {
+            modifier = 'major';
+          }
+          if (note == 4) {
+            modifier = 'minor';
+          }
+          if (note == 5) {
+            modifier = 'minor';
+          }
+          if (note == 6) {
+            modifier = 'major';
+          }
+          if (note == 7) {
+            modifier = 'major';
+          }
+        }
 
-        selectedChordNotesHtml += "<span class='selected-chord-intervals__interval-"+note+"' style='border: 2px solid "+colourOfNote+"'>" + selectedChordNotes[note] + "</span>" + " ";
+        selectedChordNotesHtml += "<span class='selected-chord-intervals__interval-"+note+"' note='"+curNote+"' modifier='"+modifier+"' style='border: 2px solid "+colourOfNote+"'>" + selectedChordNotes[note] + "</span>" + " ";
       }
 
-      selectedChordNotesHtml += "<span class='selected-chord-intervals__interval-8' style='border: 2px solid "+NoteColours[selectedChordNotes[1]]+"'>" + selectedChordNotes[1] + "</span>" + " ";
-
-
-      // selectedChordNotesHtml += "<span class='selected-chord-intervals__interval-1'>" + selectedChordNotes[1] + "</span>" + " ";
-      //
-      // selectedChordNotesHtml += "<span>" + selectedChordNotes[2] + "</span>" + " ";
-      //
-      // selectedChordNotesHtml += "<span class='selected-chord-intervals__interval-3'>" + selectedChordNotes[3] + "</span>" + " ";
-      //
-      // selectedChordNotesHtml += "<span>" + selectedChordNotes[4] + "</span>" + " ";
-      //
-      // selectedChordNotesHtml += "<span class='selected-chord-intervals__interval-5'>" + selectedChordNotes[5] + "</span>" + " ";
-      //
-      // selectedChordNotesHtml += "<span>" + selectedChordNotes[6] + "</span>" + " ";
-      //
-      // selectedChordNotesHtml += "<span class='selected-chord-intervals__interval-7'>" + selectedChordNotes[7] + "</span>" + " ";
-
-
-
+      var curNote = selectedChordNotes[1];
+      selectedChordNotesHtml += "<span class='selected-chord-intervals__interval-8' note='"+curNote+"' modifier='"+modifier+"' style='border: 2px solid "+NoteColours[selectedChordNotes[1]]+"'>" + selectedChordNotes[1] + "</span>" + " ";
 
       $('.selected-chord-intervals').html(selectedChordNotesHtml);
+      $('.selected-chord-intervals span').on('click', function(){
+        var curSpan = $(this);
+        var curNote = curSpan.attr('note');
+        var curModifier = curSpan.attr('modifier');
+
+        $('.selected-chord-intervals span.active').removeClass('active');
+        curSpan.addClass('active');
+
+        changeFretBoard(curNote,curModifier)
+
+      })
 
     }
 
     createSelectedChordNotes();
 
-
-
-    guitarNeck.css({
-      "height" : window.innerWidth * 0.1 + 'px',
-      "width" : window.innerWidth * 0.8 + 'px',
-      "margin" : window.innerWidth * 0.1 + 'px',
-      "background-color" : "#FFE082"
-    });
-
-
-    var numberOfFrets = 22,
-    numberOfStrings = 6,
-    neckWidth = window.innerWidth * 0.8,
-    avgFretLength = neckWidth / numberOfFrets;
-
-    var maxFretWidth = 1,
-    minFretWidth = 0.25;
-
-    var differenceBetweenFretMinMax = maxFretWidth - minFretWidth,
-    maxFretWidthPx = avgFretLength / (1 - differenceBetweenFretMinMax/2);
-
-    function outputFretLength(fret) {
-    fret = numberOfFrets - fret;
-    return  (minFretWidth + differenceBetweenFretMinMax / numberOfFrets * fret);
-
-    }
-
-    var guitarNeckHtml = "";
-
-    //fret loop
-    for (var fret_i = 0; fret_i < numberOfFrets; fret_i++) {
-      var fretHtml = "";
-      var fretNumber = fret_i + 1;
-      var fretLength = maxFretWidthPx * outputFretLength(fretNumber);
-
-      fretHtml += "<div class='fret' fret-num='" + fretNumber + "'  style='width: "+fretLength+"px'>";
-
-      fretHtml += "<div class='fret__number-label'>"+fretNumber+"</div>"
-
-      //string loop
-      for (var string_i = 0; string_i < numberOfStrings; string_i++) {
-        var stringHtml = "";
-        var stringNumber = string_i + 1;
-        var stringTune = stringArray[string_i];
-        var stringNoteIndex = fretNumber % 12;
-        var stringNote = Notes[stringTune][stringNoteIndex];
-        var noteColour = NoteColours[stringNote];
-
-        var noteHighlighted = false;
-        for (var note in selectedChordNotes) {
-          if (selectedChordNotes.hasOwnProperty(note)) {
-              if (selectedChordNotes[note] == stringNote) {
-                noteHighlighted = true;
-              }
-          }
-        }
-
-        var noteIsRoot = false;
-        if (stringNote == selectedNote) {
-          noteIsRoot = true;
-        }
-
-
-        stringHtml += "<div class='guitar-string' string-note='" + stringNote + "' string-tune='" + stringTune + "' string-num='" + stringNumber + "'>";
-
-        if (noteHighlighted == true) {
-
-          if (noteIsRoot == true) {
-            stringHtml += "<div class='guitar-string__background' style='border: 4px solid white; background-color: "+noteColour+";'>";
-          }else{
-            stringHtml += "<div class='guitar-string__background' style='background-color: "+noteColour+"; box-shadow: 0px 0px 15px -2px rgba(0,0,0,0.2)'>";
-          }
-
-
-
-        }else{
-          stringHtml += "<div class='guitar-string__background'>";
-        }
-
-
-            stringHtml += stringNote;
-
-          stringHtml += "</div>";
-
-
-        stringHtml += "</div>";
-        fretHtml += stringHtml;
-
-      }
-
-      fretHtml += "</div>";
-      guitarNeckHtml += fretHtml;
-    }
-
-    guitarNeck.html(guitarNeckHtml);
-
-    $('.fret[fret-num="3"]').addClass('single-dot');
-
-    $('.fret[fret-num="5"]').addClass('single-dot');
-
-    $('.fret[fret-num="7"]').addClass('single-dot');
-
-    $('.fret[fret-num="9"]').addClass('single-dot');
-
-    $('.fret[fret-num="12"]').addClass('double-dot');
-
-    $('.fret[fret-num="15"]').addClass('single-dot');
-
-    $('.fret[fret-num="17"]').addClass('single-dot');
-
-    $('.fret[fret-num="19"]').addClass('single-dot');
-
-    $('.fret[fret-num="21"]').addClass('single-dot');
-
   }
-
-  renderNeck();
-
-  $(window).on('resize', renderNeck);
-
-  $('.key, .modifier').on('change', renderNeck);
-
-
-
 
   </script>
   </body>

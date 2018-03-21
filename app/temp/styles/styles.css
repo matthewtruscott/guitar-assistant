@@ -422,14 +422,34 @@ img{
     color: white;
     line-height: 1.5vw;
     z-index: 1;
+    font-size: 0.9vw;
+    opacity: 0.5;
   }
+
+.guitar-string__background--root-note{
+      border: 0.15vw solid black;
+      color: black;
+      font-weight: bold;
+      opacity: 1;
+
+    }
+
+.guitar-string__background--3rd-note{
+      border: 0.15vw solid black;
+      opacity: 1;
+    }
+
+.guitar-string__background--5th-note{
+      border: 0.15vw solid black;
+      opacity: 1;
+    }
 
 .fret{
   height: 100%;
   float: left;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
-  border-left: black 3px solid;
+  border-left: rgba(121, 85, 72, 0.35) 3px solid;
   position: relative;
 
 }
@@ -442,7 +462,7 @@ img{
   }
 
 .fret:last-of-type{
-  border-right: black 3px solid;
+  border-right: rgba(121, 85, 72, 0.35) 3px solid;
   -webkit-box-sizing:content-box;
           box-sizing:content-box;
 
@@ -498,6 +518,8 @@ img{
 .selected-chord-intervals{
 
   margin-top: 2em;
+
+  border: 0.2vw solid white;
 }
 
 .selected-chord-intervals span{
@@ -507,6 +529,82 @@ img{
     padding: 0 0.5em;
     -webkit-box-sizing: border-box;
             box-sizing: border-box;
+    cursor: pointer;
+    border-radius: 10%;
+  }
+
+.selected-chord-intervals span:hover,
+  .selected-chord-intervals span.active{
+    color: white;
+  }
+
+.selected-chord-intervals span[note="A"]:hover,
+  .selected-chord-intervals span[note="A"].active{
+    background-color: #f44336;
+  }
+
+.selected-chord-intervals span[note="A#"]:hover,
+  .selected-chord-intervals span[note="A"].active{
+    background-color: #ff5722;
+  }
+
+.selected-chord-intervals span[note="B"]:hover,
+  .selected-chord-intervals span[note="B"].active{
+    background-color: #ff9800;
+  }
+
+.selected-chord-intervals span[note="C"]:hover,
+  .selected-chord-intervals span[note="C"].active{
+    background-color: #ffeb3b;
+  }
+
+.selected-chord-intervals span[note="C#"]:hover,
+  .selected-chord-intervals span[note="C#"].active{
+    background-color: #cddc39;
+  }
+
+.selected-chord-intervals span[note="D"]:hover,
+  .selected-chord-intervals span[note="D"].active{
+    background-color: #8bc34a;
+  }
+
+.selected-chord-intervals span[note="D#"]:hover,
+  .selected-chord-intervals span[note="D#"].active{
+    background-color: #4caf50;
+  }
+
+.selected-chord-intervals span[note="E"]:hover,
+  .selected-chord-intervals span[note="E"].active{
+    background-color: #00bcd4;
+  }
+
+.selected-chord-intervals span[note="F"]:hover,
+  .selected-chord-intervals span[note="F"].active{
+    background-color: #2196f3;
+  }
+
+.selected-chord-intervals span[note="F#"]:hover,
+  .selected-chord-intervals span[note="F#"].active{
+    background-color: #3f51b5;
+  }
+
+.selected-chord-intervals span[note="G"]:hover,
+  .selected-chord-intervals span[note="G"].active{
+    background-color: #673ab7;
+  }
+
+.selected-chord-intervals span[note="G#"]:hover,
+  .selected-chord-intervals span[note="G#"].active{
+    background-color: #9c27b0;
+  }
+
+.selected-chord-intervals span[modifier="major"]::before{
+    content: "Major";
+    font-weight: 500;
+  }
+
+.selected-chord-intervals span[modifier="minor"]::before{
+    content: "Minor";
   }
 
 .selected-chord-intervals span::after{
@@ -515,6 +613,18 @@ img{
     color: black;
     font-size: 0.6em;
     top: -1.8em;
+    left:50%;
+    font-weight: 300;
+    -webkit-transform: translateX(-50%);
+            transform: translateX(-50%);
+  }
+
+.selected-chord-intervals span::before{
+    display: block;
+    position: absolute;
+    color: black;
+    font-size: 0.6em;
+    bottom: -1.8em;
     left:50%;
     font-weight: 300;
     -webkit-transform: translateX(-50%);

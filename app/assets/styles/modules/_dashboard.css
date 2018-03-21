@@ -13,13 +13,90 @@
     position: relative;
     padding: 0 0.5em;
     box-sizing: border-box;
+    cursor: pointer;
+    border-radius: 10%;
   }
+
+  border: 0.2vw solid white;
+
+  span:hover,
+  span.active{
+    color: white;
+  }
+
+  span[note="A"]:hover,
+  span[note="A"].active{
+    background-color: #f44336;
+  }
+  span[note="A#"]:hover,
+  span[note="A"].active{
+    background-color: #ff5722;
+  }
+  span[note="B"]:hover,
+  span[note="B"].active{
+    background-color: #ff9800;
+  }
+  span[note="C"]:hover,
+  span[note="C"].active{
+    background-color: #ffeb3b;
+  }
+  span[note="C#"]:hover,
+  span[note="C#"].active{
+    background-color: #cddc39;
+  }
+  span[note="D"]:hover,
+  span[note="D"].active{
+    background-color: #8bc34a;
+  }
+  span[note="D#"]:hover,
+  span[note="D#"].active{
+    background-color: #4caf50;
+  }
+  span[note="E"]:hover,
+  span[note="E"].active{
+    background-color: #00bcd4;
+  }
+  span[note="F"]:hover,
+  span[note="F"].active{
+    background-color: #2196f3;
+  }
+  span[note="F#"]:hover,
+  span[note="F#"].active{
+    background-color: #3f51b5;
+  }
+  span[note="G"]:hover,
+  span[note="G"].active{
+    background-color: #673ab7;
+  }
+  span[note="G#"]:hover,
+  span[note="G#"].active{
+    background-color: #9c27b0;
+  }
+
+  span[modifier="major"]::before{
+    content: "Major";
+    font-weight: 500;
+  }
+  span[modifier="minor"]::before{
+    content: "Minor";
+  }
+
   span::after{
     display: block;
     position: absolute;
     color: black;
     font-size: 0.6em;
     top: -1.8em;
+    left:50%;
+    font-weight: 300;
+    transform: translateX(-50%);
+  }
+  span::before{
+    display: block;
+    position: absolute;
+    color: black;
+    font-size: 0.6em;
+    bottom: -1.8em;
     left:50%;
     font-weight: 300;
     transform: translateX(-50%);
